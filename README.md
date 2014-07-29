@@ -7,7 +7,7 @@ jQuery 1.10+
 ## Usage
 Include presenteer scripts and css/less style.
 
-Simple html will be
+Simple html example:
 ```html
 <div class="presenteer">
     <div class="presenteer-slides">
@@ -49,3 +49,7 @@ If you want to add cover to your slideshow just add
     </div>
 </div>
 ```
+
+Thats it!
+Tested on Chrome, Safari, Firefox, IE, Mobile Safari.
+License: MIT.
