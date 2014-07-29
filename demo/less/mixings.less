@@ -1,0 +1,262 @@
+.clearfix() {
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+
+  &:after { clear: both;}
+}
+
+.a(@color, @hover, @text-decoration: none, @text-decoration-hover: none) {
+  a {.transition(all, 150ms, ) }
+  a:link, a:visited { color: @color; text-decoration: @text-decoration;}
+  a:hover, a:focus { color: @hover; text-decoration: @text-decoration-hover;}
+}
+
+.font (@font-name, @font-file, @font-weight: normal, @font-style: normal) {
+    @font-face {
+        font-family: @font-name;
+        src: url('@{font-file}.eot');
+        src: url('@{font-file}.eot?#iefix') format('embedded-opentype'),
+             url('@{font-file}.woff') format('woff'),
+             url('@{font-file}.ttf') format('truetype');
+        font-weight: @font-weight;
+        font-style: @font-style;
+    }
+}
+
+.box-sizing(@prop: border-box) {
+  -webkit-box-sizing: @prop;
+  -moz-box-sizing: @prop;
+  box-sizing: @prop;
+}
+
+// Drop shadows
+.box-shadow (@shadowA, @shadowB:X, ...) {
+  // Multiple shadow solution from http://toekneestuck.com/blog/2012/05/15/less-css-arguments-variable/
+  @props: ~`"@{arguments}".replace(/[\[\]]|\,\sX/g, '')`;
+  -webkit-box-shadow: @props;
+          box-shadow: @props;
+}
+
+.background-size (...) {
+  -moz-background-size: @arguments;
+  background-size: @arguments;
+}
+
+// Transitions
+.transition (@property, @duration, @style: @swts-common-transition-style ) {
+  -webkit-transition: @property @duration @style;
+  -moz-transition: @property @duration @style;
+  -ms-transition: @property @duration @style;
+  transition: @property @duration @style;
+}
+
+.transition-delay (@delay) {
+  -webkit-transition-delay:@delay;
+  -moz-transition-delay:@delay;
+  -ms-transition-delay:@delay;
+  transition-delay:@delay;
+}
+
+.transition-transform (@duration, @style: @swts-common-transition-style) {
+  -webkit-transition: -webkit-transform @duration @style;
+  -moz-transition: -moz-transform @duration @style;
+  -ms-transition: -ms-transform @duration @style;
+  transition: transform @duration @style;
+}
+
+.clear-transition () {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  transition: none !important;
+}
+
+// Transform Tools
+.transform (...) {
+  -webkit-transform: @arguments;
+  -moz-transform: @arguments;
+  -ms-transform: @arguments;
+  transform: @arguments;
+}
+
+.transform-origin (@coord) {
+    -webkit-transform-origin: @coord;
+    -moz-transform-origin: @coord;
+    -o-transform-origin: @coord;
+    -ms-transform-origin: @coord;
+    transform-origin: @coord;
+}
+
+.rotate (@deg) {
+  .transform(rotate(@deg));
+}
+
+.scale (@ratio) {
+  .transform(scale(@ratio));
+}
+
+.translate (@x, @y) {
+  .transform(translate(@x, @y));
+}
+
+.translate3d (@x, @y, @z) {
+  .transform(translate3d(@x, @y, @z));
+}
+
+.clear-transform() {
+  -webkit-transform: none !important;
+  -moz-transform: none !important;
+  -ms-transform: none !important;
+  transform: none !important;
+}
+
+
+// 3D Stuff
+.perspective (...) {
+  -webkit-perspective: @arguments;
+  -moz-perspective: @arguments;
+  -ms-perspective: @arguments;
+  perspective: @arguments;
+}
+
+.transform-preserve-3d () {
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+.backface-visibility (@visibility){
+  -webkit-backface-visibility: @visibility;
+     -moz-backface-visibility: @visibility;
+          backface-visibility: @visibility;
+}
+
+// flexbox
+.display-flex () {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.flex-direction (@direction) when (@direction = column) {
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  -webkit-flex-direction: @direction;
+  -ms-flex-direction: @direction;
+  flex-direction: @direction;
+}
+
+.flex-direction (@direction) when (@direction = row) {
+  -webkit-box-direction: normal;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: @direction;
+  -ms-flex-direction: @direction;
+  flex-direction: @direction;
+}
+
+.flex (@size, @shrink: 1, @base: auto) {
+  -webkit-box-flex: @size;
+  -webkit-flex: @size @shrink @base;
+  -ms-flex: @size @shrink @base;
+  flex: @size @shrink @base;
+}
+
+.items (@align) {
+  -webkit-box-align: @align;
+  -webkit-align-items: @align;
+  -ms-flex-align: @align;
+  align-items: @align;
+}
+
+.justify-content (@justify) {
+  -webkit-box-pack: @justify;
+  -webkit-justify-content: @justify;
+  -ms-flex-pack: @justify;
+  justify-content: @justify;
+}
+
+.align-self (@align) {
+  -webkit-align-self: @align;
+  -ms-flex-item-align: @align;
+  align-self: @align;
+}
+
+// animations
+
+.animation (...) {
+  -webkit-animation: @arguments;
+  -moz-animation: @arguments;
+  -ms-animation: @arguments;
+  animation: @arguments;
+}
+
+.fadein () {
+  visibility:visible;
+  opacity:1;
+  -webkit-transition-delay:0s;
+  -moz-transition-delay:0s;
+  -ms-transition-delay:0s;
+  transition-delay:0s;
+}
+
+.fadeout (@delay: 0.3s) {
+  visibility:hidden;
+  opacity:0;
+  -webkit-transition:visibility 0s ease-in-out @delay, opacity @delay ease-in-out;
+  -moz-transition:visibility 0s ease-in-out @delay, opacity @delay ease-in-out;
+  -ms-transition:visibility 0s ease-in-out @delay, opacity @delay ease-in-out;
+  transition:visibility 0s ease-in-out @delay, opacity @delay ease-in-out;
+}
+
+//Typography
+
+.hyphenation() {
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
+
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+
+  -webkit-hyphenate-before: 2;
+  -webkit-hyphenate-after: 3;
+  hyphenate-lines: 3;
+}
+
+.ligatures() {
+  -moz-font-feature-settings: "liga=1, dlig=1";
+  -ms-font-feature-settings: "liga", "dlig";
+  -webkit-font-feature-settings: "liga", "dlig";
+  -o-font-feature-settings: "liga", "dlig";
+  font-feature-settings: "liga", "dlig";
+}
+
+// Other stuff
+
+.border-radius (@radius: 5px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius:    @radius;
+  border-radius:         @radius;
+
+  -moz-background-clip:    padding;
+  -webkit-background-clip: padding-box;
+background-clip:         padding-box;
+}
+
+.circle(@diameter: 20px) {
+  width: @diameter;
+  height: @diameter;
+  .border-radius(50%);
+}
+
+.placeholder(@color) {
+  &:-moz-placeholder { color: @color; }
+  &:-ms-input-placeholder { color: @color; }
+  &::-webkit-input-placeholder { color: @color;}
+}

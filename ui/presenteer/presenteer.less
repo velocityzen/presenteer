@@ -1,0 +1,117 @@
+@presenteer-bg-color: 		#000;
+@presenteer-cover-color: 	#000;
+@presenteer-cover-opacity: 	0.6;
+@presenteer-controls-size: 	4*@swts-grid;
+@presenteer-controls-color: #fff;
+
+.presenteer {
+	position: relative;
+	background: @presenteer-bg-color;
+}
+
+.presenteer-slides {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+
+	.slide {
+		position: absolute;
+		top:0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		.transition(all, 600ms);
+
+		.active {
+			z-index: 1;
+		}
+
+		img {
+			width: 100%;
+			height: auto;
+		}
+
+		iframe {
+			width: 90%;
+			height: 90%;
+			top:50%;
+			left: 50%;
+			position: relative;
+			.translate(-50%, -50%);
+		}
+	}
+}
+
+.presenteer-cover {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 10;
+	position: absolute;
+	text-align: center;
+	.box-sizing;
+	.fadeout(300ms);
+
+	&.active {
+		.fadein;
+	}
+
+	&:before {
+		top: 0;
+		left: 0;
+		content: "";
+		width: 100%;
+		height: 100%;
+		background: @presenteer-cover-color;
+		opacity: @presenteer-cover-opacity;
+		position: absolute;
+	}
+
+	& > div {
+		position: absolute;
+		top: 50%;
+		width: 100%;
+		.translate(0, -50%);
+	}
+}
+
+.presenteer-right, .presenteer-left {
+	position: absolute;
+	top: 15%;
+	height: 70%;
+	z-index: 100;
+	cursor: pointer;
+	.fadeout(300ms);
+
+	&.active {
+		.fadein;
+	}
+
+	a {
+		.circle(@presenteer-controls-size);
+		position: relative;
+		display: block;
+		top: 50%;
+		margin-top: -@presenteer-controls-size/2;
+		color: @presenteer-controls-color;
+		text-align: center;
+		border: 1px solid @presenteer-controls-color;
+		display: block;
+		&:hover, &:focus {
+			background: @presenteer-controls-color;
+			color: black;
+		}
+	}
+}
+
+.presenteer-left {
+	left: @presenteer-controls-size/2;
+}
+
+.presenteer-right {
+	right: @presenteer-controls-size/2;
+}
+

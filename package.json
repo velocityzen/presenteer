@@ -1,0 +1,23 @@
+{
+	"name": "presenteer",
+	"version": "0.1.0",
+	"description": "Sweets' UI kit simple responsive slideshow component with touch devises support",
+	"keywords": ["future", "web", "framework", "sweets", "ui", "interface", "kit", "chocolate", "slideshow", "touch", "presenteer"],
+	"author": "Alexey Novikov <v@2dubs.com> (http://2dubs.com)",
+	"preferGlobal": false,
+	"devDependencies": {
+		"fuller": "~0.3.0",
+		"fuller-less": "~0.3.0",
+		"fuller-concat": "~0.3.0",
+		"fuller-common-js": "~0.3.0",
+		"fuller-uglify": "~0.3.0"
+	},
+	"engines": {
+		"node": "~0.10.26"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:velocityzen/presenteer.git"
+	}
+}
