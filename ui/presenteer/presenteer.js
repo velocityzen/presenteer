@@ -30,7 +30,7 @@ var Presenteer = function (selector, options) {
     self.onSlide = options.onSlide;
     self.slideRatio = options.slideRatio || 0.5;
     self.currentSlide = options.startSlide;
-    self.vertical = options.vertical; //not supported for touch yet
+    self.vertical = options.vertical;
     self.cover = options.cover || 0;
     self.moving = false;
 
@@ -203,7 +203,7 @@ Presenteer.prototype = {
     buildMobile: function() {
         var self = this,
             x1, shiftX, y1, shiftY,
-            currentX = [];
+            currentPos = [];
 
         self.$b.addClass('touch')
             .on({
@@ -223,12 +223,13 @@ Presenteer.prototype = {
                     self.$slides.each(function(i, el) {
                         var pos = i - self.currentSlide;
                         if(pos >= -1 && pos <= 1) {
-                            if(!currentX[i]) {
-                                currentX[i] = (new window.WebKitCSSMatrix(getComputedStyle(el).webkitTransform)).m41;
+                            if(!currentPos[i]) {
+                                var matrix = new window.WebKitCSSMatrix(getComputedStyle(el).webkitTransform);
+                                currentPos[i] = self.vertical ? matrix.m42 : matrix.m41;
                             }
 
                             el.style[transition] = "none";
-                            el.style[transform] = 'translate3d(' + (currentX[i] + shiftX ) + 'px, 0, 0)';
+                            el.style[transform] = "translate3d("+ (self.vertical ? "0,"+(currentPos[i] + shiftY ) +"px,0" : (currentPos[i] + shiftX )+"px,0,0") +")";
                         }
                     });
 
@@ -238,8 +239,10 @@ Presenteer.prototype = {
                 },
 
                 'touchend.slider': function(e) {
-                        if (Math.abs(shiftX) > self.slideWidth / 4) {
-                            var newSlide = self.currentSlide + (shiftX > 0 ? -1 : 1);
+                        var shift = self.vertical ? shiftY : shiftX;
+
+                        if (Math.abs(shift) > self.slideWidth / 4) {
+                            var newSlide = self.currentSlide + (shift > 0 ? -1 : 1);
                             if(newSlide >= 0 && newSlide < self.$slides.length) {
                                 self.show(newSlide);
                             } else {
@@ -250,12 +253,14 @@ Presenteer.prototype = {
                         }
 
                         x1 = shiftX = undefined;
-                        currentX = [];
+                        y1 = shiftY = undefined;
+                        currentPos = [];
                 },
 
                 'touchcancel.slider': function(e) {
                     x1 = shiftX = undefined;
-                    currentX = [];
+                    y1 = shiftY = undefined;
+                    currentPos = [];
                 }
             });
     },
