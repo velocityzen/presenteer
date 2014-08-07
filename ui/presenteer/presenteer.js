@@ -40,7 +40,7 @@ var Presenteer = function (selector, options) {
         self.buildDesktop();
     }
 
-    $w.on("resize", function() {
+    $w.on("resize.presenteer", function() {
         var width =  self.$b.width();
 
          self.slideWidth = width;
@@ -50,7 +50,7 @@ var Presenteer = function (selector, options) {
             width: width,
             height: self.slideHeight
          });
-    }).trigger("resize");
+    }).trigger("resize.presenteer");
 
     self.show(self.currentSlide, true);
 };
@@ -179,7 +179,7 @@ Presenteer.prototype = {
 
         self.buildControls();
 
-        $w.on("keydown", function(e) {
+        $w.on("keydown.presenteer", function(e) {
             if(!this.moving) {
                 var st = self.$b.offset().top,
                     wt = $w.scrollTop(),
