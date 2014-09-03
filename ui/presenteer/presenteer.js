@@ -208,7 +208,7 @@ Presenteer.prototype = {
         self.$b.addClass('touch')
             .on({
                 'touchstart.slider': function(e) {
-                    e.preventDefault();
+                    // e.preventDefault();
                     self.moving = false;
                     var eo = e.originalEvent.touches[0];
                     x1 = eo.pageX;
@@ -220,21 +220,20 @@ Presenteer.prototype = {
                     shiftX = eo.pageX - x1;
                     shiftY = eo.pageY - y1;
 
-                    self.$slides.each(function(i, el) {
-                        var pos = i - self.currentSlide;
-                        if(pos >= -1 && pos <= 1) {
-                            if(!currentPos[i]) {
-                                var matrix = new window.WebKitCSSMatrix(getComputedStyle(el).webkitTransform);
-                                currentPos[i] = self.vertical ? matrix.m42 : matrix.m41;
-                            }
-
-                            el.style[transition] = "none";
-                            el.style[transform] = "translate3d("+ (self.vertical ? "0,"+(currentPos[i] + shiftY ) +"px,0" : (currentPos[i] + shiftX )+"px,0,0") +")";
-                        }
-                    });
-
-                    if(Math.abs(shiftX) > 5 && Math.abs(shiftY) > 5) {
+                    if((Math.abs(shiftX) > 5 && !self.vertical) || (Math.abs(shiftY) > 5 && self.vertical) ) {
                         e.preventDefault();
+                        self.$slides.each(function(i, el) {
+                            var pos = i - self.currentSlide;
+                            if(pos >= -1 && pos <= 1) {
+                                if(!currentPos[i]) {
+                                    var matrix = new window.WebKitCSSMatrix(getComputedStyle(el).webkitTransform);
+                                    currentPos[i] = self.vertical ? matrix.m42 : matrix.m41;
+                                }
+
+                                el.style[transition] = "none";
+                                el.style[transform] = "translate3d("+ (self.vertical ? "0,"+(currentPos[i] + shiftY ) +"px,0" : (currentPos[i] + shiftX )+"px,0,0") +")";
+                            }
+                        });
                     }
                 },
 
