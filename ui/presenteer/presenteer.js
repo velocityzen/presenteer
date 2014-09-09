@@ -205,7 +205,7 @@ Presenteer.prototype = {
             x1, shiftX, y1, shiftY,
             currentPos = [];
 
-        self.$b.addClass('touch')
+        self.$b.addClass('presenteer-touch')
             .on({
                 'touchstart.slider': function(e) {
                     // e.preventDefault();
