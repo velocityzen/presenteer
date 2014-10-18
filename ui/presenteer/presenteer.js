@@ -31,6 +31,7 @@ var Presenteer = function (selector, options) {
     self.slideRatio = options.slideRatio || 0.5;
     self.currentSlide = options.startSlide;
     self.vertical = options.vertical;
+    self.activeSlides = options.activeSlides || 1;
     self.cover = options.cover || 0;
     self.moving = false;
 
@@ -65,7 +66,7 @@ Presenteer.prototype = {
             id = self.currentSlide || 0;
         }
 
-        if (id < 0 || id >= self.$slides.length) {
+        if (id < 0 || id >= self.$slides.length - self.activeSlides + 1) {
             return;
         }
 
@@ -97,7 +98,7 @@ Presenteer.prototype = {
         if (id === 0) {
             self.$leftCtrl.removeClass("active");
             self.$rightCtrl.addClass("active");
-        } else if (id === self.$slides.length - 1) {
+        } else if (id === self.$slides.length - self.activeSlides) {
             self.$rightCtrl.removeClass("active");
             self.$leftCtrl.addClass("active");
         } else {
@@ -141,7 +142,12 @@ Presenteer.prototype = {
             el.style[transition] = isSimple ? "none" : "";
 
             var pos = i - id;
-            pos = pos <= -1 ? "-101%" : pos >= 1 ? "101%" : "0";
+
+            if(self.activeSlides > 1 && (pos >= 1)) {
+                pos = pos * 100 + "%";
+            } else {
+                pos = pos <= -1 ? "-101%" : pos >= 1 ? "101%" : "0";
+            }
 
             el.style[transform] = "translate3d("+ (self.vertical ? "0,"+pos+",0" : pos+",0,0") +")";
         });

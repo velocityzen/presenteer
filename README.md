@@ -28,6 +28,7 @@ var presenteer = new Presenteer('.presenteer', options);
 Options can be omitted.
 
 * **slideRatio** — slide aspect ratio, default is 0.5;
+* **activeslides** — number os slides to be shown;
 * **startSlide** — number of slide to start from, default is 0;
 * **vertical** — for vertical slides transition, default is false;
 * **cover** — number of slide when presenteer should show cover, default is 0;
