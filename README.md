@@ -1,5 +1,5 @@
 # Presenteer
-Adaptive slideshow with touch support and auto play/pause for Vimeo
+Adaptive slideshow with touch support and auto play/pause for Vimeo slides
 
 ## Dependencies
 jQuery 1.10+
@@ -28,10 +28,10 @@ var presenteer = new Presenteer('.presenteer', options);
 Options can be omitted.
 
 * **slideRatio** — slide aspect ratio, default is 0.5;
-* **activeSlides** — number os slides to be shown;
+* **activeSlides** — number of slides to be shown;
 * **startSlide** — number of slide to start from, default is 0;
 * **vertical** — for vertical slides transition, default is false;
-* **cover** — number of slide when presenteer should show cover, default is 0;
+* **cover** — number of slide when presenteer should show the cover, default is 0;
 * **onSlide** — callback function, will be called when slide changes and get current slide jQuery object.
 
 If you want to add cover to your slideshow just add

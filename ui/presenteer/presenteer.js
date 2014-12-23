@@ -7,8 +7,8 @@ var $ = require('$'),
     detective = require('util/detective'),
     transform = detective.transform,
     transition = detective.transition,
-    transitionEnd = detective.transitionEnd,
-    isMobile = detective.isMobile,
+    transitionEnd = detective.transitionEnd+".presenteer",
+    isTouch = detective.isTouch,
     $w = $(window);
 
 var Presenteer = function (selector, options) {
@@ -35,14 +35,15 @@ var Presenteer = function (selector, options) {
     self.cover = options.cover || 0;
     self.moving = false;
 
-    if (isMobile) {
+    if (isTouch) {
         self.buildMobile();
     } else {
         self.buildDesktop();
     }
 
     $w.on("resize.presenteer", function() {
-        var width =  self.$b.width();
+        var style = getComputedStyle(self.$c[0]),
+            width =  self.$b.width() - parseInt(style.marginLeft, 10) - parseInt(style.marginRight,10);
 
          self.slideWidth = width;
          self.slideHeight =  width * self.slideRatio;
@@ -85,7 +86,7 @@ Presenteer.prototype = {
 
         self.moveStart(id, isSimple);
 
-        if(!isMobile) {
+        if(!isTouch) {
             self.activateCtrl(id);
         }
 
@@ -107,10 +108,10 @@ Presenteer.prototype = {
         }
     },
 
-    moveEnd: function(id) {
+    moveEnd: function(prevId) {
         var self = this,
-            $next = self.$slides.eq(id),
-            $current = self.$slides.eq(self.currentSlide);
+            $next = self.$slides.eq(self.currentSlide),
+            $current = self.$slides.eq(prevId);
 
         if ($current.hasClass("slide-vimeo")) {
             self.videoAPI($('iframe', $current), 'pause', true);
@@ -120,21 +121,23 @@ Presenteer.prototype = {
             self.videoAPI($('iframe', $next), 'play', true);
         }
 
-        self.currentSlide = id;
         self.moving = false;
     },
 
     moveStart: function(id, isSimple) {
-        var self = this;
+        var self = this,
+            prevId = self.currentSlide;
+
+        self.currentSlide = id;
         self.moving = true;
 
         if(isSimple) {
             setTimeout(function () {
-                self.moveEnd(id);
+                self.moveEnd(prevId);
             }, 0);
         } else {
             self.$slides.eq(id).one(transitionEnd, function() {
-                self.moveEnd(id);
+                self.moveEnd(prevId);
             });
         }
 
@@ -151,7 +154,11 @@ Presenteer.prototype = {
 
             el.style[transform] = "translate3d("+ (self.vertical ? "0,"+pos+",0" : pos+",0,0") +")";
         });
+    },
 
+    moveStop: function() {
+        this.moving = false;
+        this.$slides.eq(this.currentSlide).off(transitionEnd);
     },
 
     update: function() {
@@ -215,7 +222,8 @@ Presenteer.prototype = {
             .on({
                 'touchstart.slider': function(e) {
                     // e.preventDefault();
-                    self.moving = false;
+                    self.moveStop();
+                    currentPos = [];
                     var eo = e.originalEvent.touches[0];
                     x1 = eo.pageX;
                     y1 = eo.pageY;
@@ -259,13 +267,11 @@ Presenteer.prototype = {
 
                         x1 = shiftX = undefined;
                         y1 = shiftY = undefined;
-                        currentPos = [];
                 },
 
                 'touchcancel.slider': function(e) {
                     x1 = shiftX = undefined;
                     y1 = shiftY = undefined;
-                    currentPos = [];
                 }
             });
     },

@@ -99,7 +99,7 @@
 
 	a {
 		.circle(@presenteer-controls-size);
-		position: relative;
+		position: absolute;
 		display: block;
 		top: 50%;
 		margin-top: -@presenteer-controls-size/2;
@@ -116,9 +116,15 @@
 
 .presenteer-left {
 	left: @presenteer-controls-size/2;
+	a {
+		left:0;
+	}
 }
 
 .presenteer-right {
 	right: @presenteer-controls-size/2;
+	a {
+		right:0;
+	}
 }
 
