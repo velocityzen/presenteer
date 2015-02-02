@@ -94,18 +94,10 @@ Presenteer.prototype = {
     },
 
     activateCtrl: function (id) {
-        var self = this;
+        var length = this.$slides.length - this.activeSlides;
 
-        if (id === 0) {
-            self.$leftCtrl.removeClass("active");
-            self.$rightCtrl.addClass("active");
-        } else if (id === self.$slides.length - self.activeSlides) {
-            self.$rightCtrl.removeClass("active");
-            self.$leftCtrl.addClass("active");
-        } else {
-            self.$leftCtrl.addClass("active");
-            self.$rightCtrl.addClass("active");
-        }
+        this.$leftCtrl[  ( id === 0      || length < 1 ? "remove" : "add") +"Class"]("active");
+        this.$rightCtrl[ ( id === length || length < 1 ? "remove" : "add") +"Class"]("active");
     },
 
     moveEnd: function(prevId) {
@@ -194,12 +186,12 @@ Presenteer.prototype = {
 
         $w.on("keydown.presenteer", function(e) {
             if(!this.moving) {
-                var st = self.$b.offset().top,
+                var top = self.$b.offset().top,
                     wt = $w.scrollTop(),
-                    sb = st + self.slideHeight,
+                    bottom = top + self.slideHeight,
                     wb = wt + $w.height();
 
-                if ((st >= wt && sb <= wb) || (st <= wt && sb >= wt) || (st <= wb && sb >= wb) || (st <= wt && sb >= wb)) {
+                if ((top >= wt && bottom <= wb) || (top <= wt && bottom >= wt) || (top <= wb && bottom >= wb) || (top <= wt && bottom >= wb)) {
                     if (e.keyCode === 37) {
                         e.preventDefault();
                         self.show(self.currentSlide - 1);
