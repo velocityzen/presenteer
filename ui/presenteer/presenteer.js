@@ -36,9 +36,11 @@ var Presenteer = function (selector, options) {
     self.moving = false;
 
     if (isTouch) {
-        self.buildMobile();
+        self.$b.addClass('touch');
+        self.bindTouch();
     } else {
-        self.buildDesktop();
+        self.buildControls();
+        options.keyboard && self.bindKeyboard();
     }
 
     $w.on("resize.presenteer", function() {
@@ -179,10 +181,8 @@ Presenteer.prototype = {
         });
     },
 
-    buildDesktop: function() {
+    bindKeyboard: function() {
         var self = this;
-
-        self.buildControls();
 
         $w.on("keydown.presenteer", function(e) {
             if(!this.moving) {
@@ -193,11 +193,11 @@ Presenteer.prototype = {
 
                 if ((top >= wt && bottom <= wb) || (top <= wt && bottom >= wt) || (top <= wb && bottom >= wb) || (top <= wt && bottom >= wb)) {
                     if (e.keyCode === 37) {
-                        e.preventDefault();
+                        // e.preventDefault();
                         self.show(self.currentSlide - 1);
                     }
                     if (e.keyCode === 39 || e.keyCode === 32) {
-                        e.preventDefault();
+                        // e.preventDefault();
                         self.show(self.currentSlide + 1);
                     }
                 }
@@ -205,7 +205,11 @@ Presenteer.prototype = {
         });
     },
 
-    buildMobile: function() {
+    unbindKeyboard: function() {
+        $w.off(".presenteer");
+    },
+
+    bindTouch: function() {
         var self = this,
             x1, shiftX, y1, shiftY,
             currentPos = [];
@@ -266,6 +270,10 @@ Presenteer.prototype = {
                     y1 = shiftY = undefined;
                 }
             });
+    },
+
+    unbindTouch: function() {
+        this.$b.off(".touch");
     },
 
     videoAPI: function($iframeSelector, action, value) {
