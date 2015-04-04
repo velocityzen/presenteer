@@ -30,10 +30,10 @@ module.exports = {
 	},
 
 	"belt:js": {
-		tools: ["concat", "common-js", "uglify"]
+		tools: ["src-files", "common-js", "uglify", "dst-file"]
 	},
 
 	"belt:css": {
-		tools: ["less"]
+		tools: ["src-file", "less", "dst-file"]
 	}
 };
