@@ -25,11 +25,11 @@ var Presenteer = function (selector, options) {
 	self.$c = self.$b.find(".presenteer-slides");
 	self.$slides = self.$b.find(".slide");
 
-	self.onSlide = options.onSlide;
-	self.slideRatio = options.slideRatio || 0.5;
-	self.currentSlide = options.startSlide;
+	self.on = options.on;
+	self.ration = options.ration || 0.5;
+	self.currentSlide = options.start;
 	self.vertical = options.vertical;
-	self.activeSlides = options.activeSlides || 1;
+	self.active = options.active || 1;
 	self.cover = options.cover || 0;
 	self.moving = false;
 
@@ -46,7 +46,7 @@ var Presenteer = function (selector, options) {
 			width = self.$b.width() - parseInt(style.marginLeft, 10) - parseInt(style.marginRight, 10);
 
 		self.slideWidth = width;
-		self.slideHeight = width * self.slideRatio;
+		self.slideHeight = width * self.ration;
 
 		self.$c.css({
 			width: width,
@@ -61,19 +61,18 @@ Presenteer.prototype = {
 	show: function (id, isSimple) {
 		if(this.moving) { return; }
 
-		var self = this,
-			cSlide = self.currentSlide;
+		var self = this;
 
 		if (id === undefined) {
-			id = (cSlide < self.$slides.length && cSlide >= 0) ? cSlide : 0;
+			id = self.currentSlide || 0;
 		}
 
-		if (id < 0 || id >= self.$slides.length - self.activeSlides + 1) {
+		if (id < 0 || id >= self.$slides.length - self.active + 1) {
 			return;
 		}
 
 		self.$slides
-			.eq(cSlide)
+			.eq(self.currentSlide)
 				.removeClass("active")
 				.end()
 			.eq(id)
@@ -91,11 +90,11 @@ Presenteer.prototype = {
 			self.activateCtrl(id);
 		}
 
-		self.onSlide && self.onSlide(self.$slides.eq(id));
+		self.on && self.on(self.$slides.eq(id));
 	},
 
 	activateCtrl: function (id) {
-		var length = this.$slides.length - this.activeSlides;
+		var length = this.$slides.length - this.active;
 
 		this.$leftCtrl[ ( id === 0 || length < 1 ? "remove" : "add") + "Class"]("active");
 		this.$rightCtrl[ ( id === length || length < 1 ? "remove" : "add") + "Class"]("active");
@@ -139,7 +138,7 @@ Presenteer.prototype = {
 
 			var pos = i - id;
 
-			if(self.activeSlides > 1 && (pos >= 1)) {
+			if(self.active > 1 && (pos >= 1)) {
 				pos = pos * 100 + "%";
 			} else {
 				pos = pos <= -1 ? "-101%" : pos >= 1 ? "101%" : "0";
@@ -161,6 +160,8 @@ Presenteer.prototype = {
 
 		if(self.currentSlide > l) {
 			self.currentSlide = l;
+		} else if(self.currentSlide < 0) {
+			self.currentSlide = 0;
 		}
 
 		self.show(undefined, true);
