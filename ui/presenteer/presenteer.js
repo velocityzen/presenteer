@@ -1,7 +1,6 @@
 /*eslint-disable strict */
-
-var $ = require("$"),
-	detective = require("util/detective");
+var $ = require("$");
+var detective = require("util/detective");
 
 var transform = detective.transform,
 	transition = detective.transition,
@@ -21,43 +20,64 @@ var Presenteer = function (selector, options) {
 		options = {};
 	}
 
-	self.$cover = self.$b.find(".presenteer-cover");
-	self.$c = self.$b.find(".presenteer-slides");
-	self.$slides = self.$b.find(".slide");
-
-	self.on = options.on;
-	self.ration = options.ration || 0.5;
+	self.ratio = options.ratio || 0.5;
+	self.activeSlides = options.active || 1;
 	self.currentSlide = options.start;
 	self.vertical = options.vertical;
-	self.active = options.active || 1;
 	self.cover = options.cover || 0;
+	self.autoplay = options.autoplay || 0;
+	self.cb = options.cb;
 	self.moving = false;
 
+	self.$cover = self.$b.find(".presenteer-cover");
+	self.$c = self.$b.find(".presenteer-slides");
+
 	if (isTouch) {
-		self.$b.addClass("touch");
 		self.bindTouch();
 	} else {
-		self.buildControls();
+		if(options.controls === undefined || options.controls) {
+			self.buildControls();
+		}
 		options.keyboard && self.bindKeyboard();
 	}
 
-	$w.on("resize.presenteer", function() {
-		var style = getComputedStyle(self.$c[0]),
-			width = self.$b.width() - parseInt(style.marginLeft, 10) - parseInt(style.marginRight, 10);
+	self
+		.bindWindow()
+		.update();
 
-		self.slideWidth = width;
-		self.slideHeight = width * self.ration;
+	if(self.autoplay) {
+		self.autoplayIncr = self.currentSlide <= self.length ? -1 : 1;
+		self.autoplayFunc = function () {
+			if(self.autoplayIncr === -1 && self.currentSlide === 0) {
+				self.autoplayIncr = 1;
+			}
 
-		self.$c.css({
-			width: width,
-			height: self.slideHeight
-		});
-	}).trigger("resize.presenteer");
+			if(self.autoplayIncr === 1 && self.currentSlide === self.length - 1) {
+				self.autoplayIncr = -1;
+			}
 
-	self.show(self.currentSlide, true);
+			self.show(self.currentSlide + self.autoplayIncr);
+		};
+
+		self.play();
+	}
 };
 
 Presenteer.prototype = {
+	play: function() {
+		var self = this;
+		if(!self.autoplayInterval && self.length > 1) {
+			self.autoplayInterval = setInterval(self.autoplayFunc, self.autoplay);
+		}
+	},
+
+	pause: function() {
+		if(this.autoplayInterval) {
+			clearInterval(this.autoplayInterval);
+			this.autoplayInterval = undefined;
+		}
+	},
+
 	show: function (id, isSimple) {
 		if(this.moving) { return; }
 
@@ -67,7 +87,7 @@ Presenteer.prototype = {
 			id = self.currentSlide || 0;
 		}
 
-		if (id < 0 || id >= self.$slides.length - self.active + 1) {
+		if (id < 0 || id >= self.length) {
 			return;
 		}
 
@@ -78,26 +98,17 @@ Presenteer.prototype = {
 			.eq(id)
 				.addClass("active");
 
-		if(id === self.cover) {
-			self.$cover.addClass("active");
-		} else {
-			self.$cover.removeClass("active");
-		}
-
+		self.$cover.toggleClass("active", id === self.cover);
 		self.moveStart(id, isSimple);
-
-		if(!isTouch) {
-			self.activateCtrl(id);
-		}
-
-		self.on && self.on(self.$slides.eq(id));
+		self.controls && self.activateCtrl(id);
+		self.cb && self.cb(self.$slides.eq(id));
 	},
 
 	activateCtrl: function (id) {
-		var length = this.$slides.length - this.active;
+		var length = this.length;
 
-		this.$leftCtrl[ ( id === 0 || length < 1 ? "remove" : "add") + "Class"]("active");
-		this.$rightCtrl[ ( id === length || length < 1 ? "remove" : "add") + "Class"]("active");
+		this.$leftCtrl.toggleClass("active", !( id === 0 || length <= 1 ) );
+		this.$rightCtrl.toggleClass("active", !( id === length - 1 || length <= 1 ) );
 	},
 
 	moveEnd: function(prevId) {
@@ -138,7 +149,7 @@ Presenteer.prototype = {
 
 			var pos = i - id;
 
-			if(self.active > 1 && (pos >= 1)) {
+			if(self.activeSlides > 1 && (pos >= 1)) {
 				pos = pos * 100 + "%";
 			} else {
 				pos = pos <= -1 ? "-101%" : pos >= 1 ? "101%" : "0";
@@ -154,12 +165,11 @@ Presenteer.prototype = {
 	},
 
 	update: function() {
-		var self = this, l;
+		var self = this;
 		self.$slides = self.$b.find(".slide");
-		l = self.$slides.length - 1;
-
-		if(self.currentSlide > l) {
-			self.currentSlide = l;
+		self.length = self.$slides.length - self.activeSlides + 1;
+		if(self.currentSlide >= self.length) {
+			self.currentSlide = self.length - 1;
 		} else if(self.currentSlide < 0) {
 			self.currentSlide = 0;
 		}
@@ -167,25 +177,54 @@ Presenteer.prototype = {
 		self.show(undefined, true);
 	},
 
-
 	buildControls: function() {
 		var self = this;
 
-		self.$rightCtrl = $('<div class="presenteer-right"><a href="#/right"></a></div>').prependTo(self.$b);
-		self.$leftCtrl = $('<div class="presenteer-left"><a href="#/left"></a></div>').prependTo(self.$b);
+		self.controls = true;
+		self.$rightCtrl = $('<div class="presenteer-right"><a href="#/right" class="icon-right"></a></div>').prependTo(self.$b);
+		self.$leftCtrl = $('<div class="presenteer-left"><a href="#/left" class="icon-left"></a></div>').prependTo(self.$b);
 
-		self.$b.on("click", ".presenteer-left, .presenteer-right", function(e) {
+		self.$b.on("click.presenteer", ".presenteer-left, .presenteer-right", function(e) {
 			e.preventDefault();
 			var slide = self.currentSlide + ($(this).hasClass("presenteer-left") ? -1 : 1);
 			self.show(slide);
 		});
+
+		return this;
+	},
+
+	bindWindow: function() {
+		var self = this;
+		self.onResize = function() {
+			clearTimeout(self.onResizeTimeout);
+			self.onResizeTimeout = setTimeout(function () {
+				var style = getComputedStyle(self.$c[0]),
+					width = self.$b.width() - parseInt(style.marginLeft, 10) - parseInt(style.marginRight, 10);
+
+				self.slideWidth = width;
+				self.slideHeight = width * self.ratio;
+
+				self.$c.css({
+					width: width,
+					height: self.slideHeight
+				});
+			}, 250);
+		};
+
+		$w.on("resize.presenteer", self.onResize).trigger("resize.presenteer");
+		return this;
+	},
+
+	unbindWindow: function() {
+		$w.off("resize orientationchange", this.onResize);
+		return this;
 	},
 
 	bindKeyboard: function() {
 		var self = this;
 
-		$w.on("keydown.presenteer", function(e) {
-			if(!this.moving) {
+		self.onKeyDown = function(e) {
+			if(!self.moving) {
 				var top = self.$b.offset().top,
 					wt = $w.scrollTop(),
 					bottom = top + self.slideHeight,
@@ -202,11 +241,15 @@ Presenteer.prototype = {
 					}
 				}
 			}
-		});
+		};
+
+		$w.on("keydown.presenteer", self.onKeyDown);
+		return this;
 	},
 
 	unbindKeyboard: function() {
-		$w.off(".presenteer");
+		$w.off("keydown", this.onKeyDown);
+		return this;
 	},
 
 	bindTouch: function() {
@@ -252,7 +295,7 @@ Presenteer.prototype = {
 
 					if (Math.abs(shift) > self.slideWidth / 4) {
 						var newSlide = self.currentSlide + (shift > 0 ? -1 : 1);
-						if(newSlide >= 0 && newSlide < self.$slides.length) {
+						if(newSlide >= 0 && newSlide < self.length) {
 							self.show(newSlide);
 						} else {
 							self.show();
@@ -270,23 +313,33 @@ Presenteer.prototype = {
 					y1 = shiftY = undefined;
 				}
 			});
+		return this;
 	},
 
 	unbindTouch: function() {
-		this.$b.off(".presenteer");
+		this.$b
+			.removeClass("presenteer-touch")
+			.off(".touch");
+		return this;
 	},
 
-	videoAPI: function($iframeSelector, action, value) {
-		if($iframeSelector.length) {
-			var url = "http:" + $iframeSelector.attr("src").split("?")[0],
-				data = { method: action };
+	videoAPI: function($iframe, action, value) {
+		if($iframe.length) {
+			var data = { method: action };
 
 			if (value) {
 				data.value = value;
 			}
 
-			$iframeSelector[0].contentWindow.postMessage(JSON.stringify(data), url);
+			$iframe[0].contentWindow.postMessage(JSON.stringify(data), "https://player.vimeo.com");
 		}
+	},
+
+	remove: function() {
+		this
+			.unbindWindow()
+			.unbindKeyboard()
+			.unbindTouch();
 	}
 };
 

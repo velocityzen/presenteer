@@ -24,16 +24,30 @@ Then just:
 var presenteer = new Presenteer('.presenteer', options);
 ```
 
-###Options
+### Options
 Options can be omitted.
 
 * **ratio** — slide aspect ratio, default is 0.5;
 * **active** — number of slides to be shown;
-* **start** — number of slide to start from, default is 0;
+* **start** — slide number to start from, default is 0;
 * **vertical** — for vertical slides transition, default is false;
+* **cover** — slide number when presenteer should show the cover, default is 0;
 * **keyboard** — use arrow keys and spacebar for slides navigation, default is false
-* **cover** — number of slide when presenteer should show the cover, default is 0;
-* **on** — callback function, will be called when slide changes and get current slide jQuery object.
+* **autoplay** — auto playing slideshow without controlls;
+* **cb** — callback function, will be called when slide changes and get current slide jQuery object.
+
+### Methods
+#### show(n)
+shows `n` slide
+
+#### play() and pause()
+play/pause presenteer in autoplay mode
+
+#### update
+gets data from dom
+
+#### remove
+deconstructor
 
 If you want to add cover to your slideshow just add
 ```html
