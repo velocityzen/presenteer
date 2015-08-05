@@ -67,5 +67,7 @@ If you want to add cover to your slideshow just add
 ```
 
 Thats it!
+
 Tested on Chrome, Safari, Firefox, IE, Mobile Safari.
+
 License: MIT.
