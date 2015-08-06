@@ -1,5 +1,5 @@
 # Presenteer
-Adaptive slideshow with touch support and auto play/pause for Vimeo slides. Only **5,797 bytes**
+Adaptive slideshow with touch support and auto play/pause for Vimeo slides. Only **5,911 bytes**
 
 ## Dependencies
 jQuery 1.10+
@@ -39,10 +39,13 @@ Options can be omitted.
 ### Methods
 All methods are chainable
 
+#### next/previous
+shows next/previous slide
+
 #### show(n)
 shows `n` slide
 
-#### play() and pause()
+#### play/pause
 play/pause presenteer in autoplay mode
 
 #### update

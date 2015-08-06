@@ -78,6 +78,14 @@ Presenteer.prototype = {
 		return self;
 	},
 
+	next: function() {
+		return this.show(this.currentSlide + 1);
+	},
+
+	previous: function() {
+		return this.show(this.currentSlide - 1);
+	},
+
 	show: function (id, isSimple) {
 		if(this.moving) { return this; }
 
