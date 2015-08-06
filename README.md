@@ -1,5 +1,5 @@
 # Presenteer
-Adaptive slideshow with touch support and auto play/pause for Vimeo slides
+Adaptive slideshow with touch support and auto play/pause for Vimeo slides. Only **5,797 bytes**
 
 ## Dependencies
 jQuery 1.10+
@@ -33,10 +33,12 @@ Options can be omitted.
 * **vertical** — for vertical slides transition, default is false;
 * **cover** — slide number when presenteer should show the cover, default is 0;
 * **keyboard** — use arrow keys and spacebar for slides navigation, default is false
-* **autoplay** — auto playing slideshow without controlls;
+* **autoplay** — auto playing slideshow, without controlls. To start autoplay mode you need to call `play` method manually;
 * **cb** — callback function, will be called when slide changes and get current slide jQuery object.
 
 ### Methods
+All methods are chainable
+
 #### show(n)
 shows `n` slide
 

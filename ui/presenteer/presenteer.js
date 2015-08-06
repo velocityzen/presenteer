@@ -21,9 +21,9 @@ var Presenteer = function (selector, options) {
 	}
 
 	self.ratio = options.ratio || 0.5;
-	self.activeSlides = options.active || 1;
-	self.currentSlide = options.start;
 	self.vertical = options.vertical;
+	self.currentSlide = options.start;
+	self.activeSlides = options.active || 1;
 	self.cover = options.cover || 0;
 	self.autoplay = options.autoplay || 0;
 	self.cb = options.cb;
@@ -58,8 +58,6 @@ var Presenteer = function (selector, options) {
 
 			self.show(self.currentSlide + self.autoplayIncr);
 		};
-
-		self.play();
 	}
 };
 
@@ -69,6 +67,7 @@ Presenteer.prototype = {
 		if(!self.autoplayInterval && self.length > 1) {
 			self.autoplayInterval = setInterval(self.autoplayFunc, self.autoplay);
 		}
+		return self;
 	},
 
 	pause: function() {
@@ -76,10 +75,11 @@ Presenteer.prototype = {
 			clearInterval(this.autoplayInterval);
 			this.autoplayInterval = undefined;
 		}
+		return self;
 	},
 
 	show: function (id, isSimple) {
-		if(this.moving) { return; }
+		if(this.moving) { return this; }
 
 		var self = this;
 
@@ -88,7 +88,7 @@ Presenteer.prototype = {
 		}
 
 		if (id < 0 || id >= self.length) {
-			return;
+			return self;
 		}
 
 		self.$slides
@@ -102,6 +102,7 @@ Presenteer.prototype = {
 		self.moveStart(id, isSimple);
 		self.controls && self.activateCtrl(id);
 		self.cb && self.cb(self.$slides.eq(id));
+		return self;
 	},
 
 	activateCtrl: function (id) {
@@ -175,6 +176,7 @@ Presenteer.prototype = {
 		}
 
 		self.show(undefined, true);
+		return self;
 	},
 
 	buildControls: function() {
@@ -336,7 +338,7 @@ Presenteer.prototype = {
 	},
 
 	remove: function() {
-		this
+		return this
 			.unbindWindow()
 			.unbindKeyboard()
 			.unbindTouch();
